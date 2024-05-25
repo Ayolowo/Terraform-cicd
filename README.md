@@ -1,6 +1,6 @@
 # MySQL RDS Database Deployment in VPC
 
-[MYSQLRDSIMAGE](./MYSQL%20RDS.png)
+![MYSQLRDSIMAGE](./MYSQL%20RDS.png)
 
 ## Project Overview
 
