@@ -1,4 +1,4 @@
-#To create a RDS Database Instance
+# Create a RDS Database Instance
 resource "aws_db_instance" "myrdsinstance" {
   engine                 = "mysql"
   identifier             = "myrdsinstance"
