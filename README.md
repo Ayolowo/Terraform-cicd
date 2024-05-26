@@ -59,8 +59,7 @@ In this Terraform project, I created a robust and secure AWS infrastructure that
 
 1. VPC:
 
-```
-   `hcl`
+```hcl
    resource "aws_vpc" "rds_vpc" {
    cidr_block = var.vpc_cidr
    enable_dns_hostnames = true
