@@ -85,7 +85,6 @@ Terraform = "true"
 }
 }
 
-# Deploy the private subnets
 
 resource "aws_subnet" "private_subnets" {
 for_each = var.private_subnets
