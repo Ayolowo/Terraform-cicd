@@ -71,7 +71,7 @@ In this Terraform project, I created a robust and secure AWS infrastructure that
 
 2. Subnets:
 
-hcl
+```hcl
 resource "aws_subnet" "public_subnets" {
 for_each = var.public_subnets
 vpc_id = aws_vpc.rds_vpc.id
@@ -98,9 +98,11 @@ Name = each.key
 Terraform = "true"
 }
 }
+```
 
 3. Route Tables and Associations:
 
+```hcl
 resource "aws_route_table" "public_route_table" {
 vpc_id = aws_vpc.rds_vpc.id
 
@@ -137,18 +139,22 @@ route_table_id = aws_route_table.private_route_table.id
 for_each = aws_subnet.private_subnets
 subnet_id = each.value.id
 }
+```
 
 4. Internet Gateway:
 
+```hcl
 resource "aws_internet_gateway" "internet_gateway" {
 vpc_id = aws_vpc.rds_vpc.id
 tags = {
 Name = "internet_access_igw"
 }
 }
+```
 
 5. EC2 Instance:
 
+```hcl
 data "aws_ami" "ubuntu" {
 most_recent = true
 
@@ -179,9 +185,11 @@ tags = {
 Name = "For RDS"
 }
 }
+```
 
 6. EC2 Security Group:
 
+```hcl
 resource "aws_security_group" "ec2_sg" {
 name = "ec2_sg"
 description = "Allow SSH inbound traffic"
@@ -207,11 +215,13 @@ tags = {
 Name = "ec2_sg"
 }
 }
+```
 
 7. Key Pair:
 
 ### Instructions for generating a key pair locally and storing it securely
 
+```hcl
 resource "local_sensitive_file" "tf_key" {
 content = tls_private_key.rsa.private_key_pem
 file_permission = "600"
@@ -228,9 +238,11 @@ resource "tls_private_key" "rsa" {
 algorithm = "RSA"
 rsa_bits = 4096
 }
+```
 
 8. RDS Instance:
 
+```hcl
 resource "aws_db_instance" "myrdsinstance" {
 engine = "mysql"
 identifier = "myrdsinstance"
@@ -250,9 +262,11 @@ resource "aws_db_subnet_group" "rds_subnets" {
 name = "my-db-subnet-group"
 subnet_ids = [aws_subnet.private_subnets["private_subnet_1"].id, aws_subnet.private_subnets["private_subnet_2"].id]
 }
+```
 
 9. RDS Security Group:
 
+```hcl
 resource "aws_security_group" "rds_sg" {
 name = "rds_sg"
 vpc_id = aws_vpc.rds_vpc.id
@@ -270,6 +284,7 @@ protocol = "-1"
 cidr_blocks = ["0.0.0.0/0"]
 }
 }
+```
 
 ## Security Considerations
 
