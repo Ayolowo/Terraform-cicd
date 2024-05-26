@@ -58,18 +58,18 @@ In this Terraform project, I created a robust and secure AWS infrastructure that
 ## Detailed Component Breakdown
 
 1. VPC:
-
-resource "aws_vpc" "rds_vpc" {
-cidr_block = var.vpc_cidr
-enable_dns_hostnames = true
-
-tags = {
-Name = "rds_vpc"
-}
-}
+   hcl
+   resource "aws_vpc" "rds_vpc" {
+   cidr_block = var.vpc_cidr
+   enable_dns_hostnames = true
+   tags = {
+   Name = "rds_vpc"
+   }
+   }
 
 2. Subnets:
 
+hcl
 resource "aws_subnet" "public_subnets" {
 for_each = var.public_subnets
 vpc_id = aws_vpc.rds_vpc.id
