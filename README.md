@@ -1,5 +1,7 @@
 # MySQL RDS Database Deployment in VPC
 
+![MYSQLRDS](./RDS_VPC.png)
+
 ## Project Overview
 
 This project demonstrates the deployment of a MySQL RDS database within a Virtual Private Cloud (VPC) using AWS services. The setup ensures high availability, security, and efficient network traffic management.
