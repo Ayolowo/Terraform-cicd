@@ -295,5 +295,3 @@ cidr_blocks = ["0.0.0.0/0"]
 # Conclusion
 
 This Terraform project sets up a secure and scalable infrastructure with a VPC, EC2 instance, and RDS MySQL database. The use of public and private subnets, along with appropriate security groups, ensures a well-secured environment for your applications and databases. Make sure to follow best practices for key management and access control to maintain a secure setup.
-
-Feel free to add this detailed explanation to your GitHub repository, and make sure to include the necessary code snippets in the respective sections as indicated.
