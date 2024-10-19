@@ -19,10 +19,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          sparse-checkout: .
 
       # Runs a single command using the runner's shell
       - name: Configure AWS Credentials
