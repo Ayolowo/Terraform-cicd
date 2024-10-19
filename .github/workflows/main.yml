@@ -13,7 +13,7 @@ jobs:
   plan:
     # The type of runner that the job will run on
     name: Terraform plan
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
