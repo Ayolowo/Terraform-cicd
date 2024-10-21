@@ -1,8 +1,5 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
@@ -13,7 +10,6 @@ permissions:
   contents: read
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   plan:
     # The type of runner that the job will run on
     name: Terraform plan
@@ -33,8 +29,27 @@ jobs:
           role-to-assume: arn:aws:iam::533267063404:role/cicdactions #change to reflect IAM role’s ARN
 
       # Runs a set of commands using the runner's shell
-      - name: Run a multi-line script for terraform commands
+      - name: Initialize project and view terraform plan
         run: |
           terraform fmt -recursive
           terraform init
           terraform plan
+
+  deploy:
+    name: Terraform Deploy
+    needs: plan
+    if: github.ref == 'refs/head/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials for github actions
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          audience: sts.amazonaws.com
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::533267063404:role/cicdactions
+      - name: Initialize project and deploy to AWS
+        run: |
+          terraform fmt -recursive
+          terraform apply
