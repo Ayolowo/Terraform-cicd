@@ -51,4 +51,5 @@ jobs:
       - name: Initialize project and deploy to AWS
         run: |
           terraform fmt -recursive
+          terraform init
           terraform apply
