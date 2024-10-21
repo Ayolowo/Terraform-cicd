@@ -36,7 +36,7 @@ jobs:
           terraform plan
 
   deploy:
-    name: Terraform Deploy
+    name: Terraform apply
     needs: plan
     runs-on: ubuntu-latest
     steps:
