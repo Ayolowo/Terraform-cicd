@@ -39,13 +39,13 @@ jobs:
           role-to-assume: ${{secrets.ROLE_TO_ASSUME}} #change to reflect IAM role’s ARN
 
       # Runs a set of terraform commands using the runners shell
+      - name: Terraform Init
+        run: terraform init
+
       - name: Terraform Validate
         run: |
           terraform fmt -recursive
           terraform validate
-
-      - name: Terraform Init
-        run: terraform init
 
       - name: Terraform Plan
         run: terraform plan
