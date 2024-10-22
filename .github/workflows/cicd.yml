@@ -63,6 +63,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Use Node.js
+        uses: actions/setup-node@v4.0.4
+        with:
+          node-version: 20
+
       - name: Configure AWS Credentials for github actions
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
