@@ -1,7 +1,7 @@
-name: CI
+name: cicd workflow
 
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Triggers the workflow on push request event but only for the "main" branch
   push:
     branches: ["main"]
   workflow_dispatch:
@@ -38,29 +38,22 @@ jobs:
           aws-region: ${{secrets.AWS_REGION}}
           role-to-assume: ${{secrets.ROLE_TO_ASSUME}} #change to reflect IAM role’s ARN
 
-      # Runs a set of commands using the runner's shell
-      - name: Initialize project and view terraform plan
+      # Runs a set of terraform commands using the runners shell
+      - name: Terraform Validate
         run: |
           terraform fmt -recursive
-          terraform init
-          terraform plan
+          terraform validate
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
 
   deploy:
     name: Terraform apply
     needs: plan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials for github actions
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          audience: sts.amazonaws.com
-          aws-region: ${{secrets.AWS_REGION}}
-          role-to-assume: ${{secrets.ROLE_TO_ASSUME}}
-      - name: Initialize project and deploy to AWS
-        run: |
-          terraform fmt -recursive
-          terraform init
-          terraform validate
-          terraform apply
+      - name: Deploy to AWS
+        run: terraform apply
