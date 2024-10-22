@@ -4,10 +4,12 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   id-token: write
   contents: read
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   plan:
@@ -18,15 +20,23 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Runs a single command using the runner's shell
+      - name: Hashicorp - Terraform setup
+        uses: hashicorp/setup-terraform@v3.1.2
+
+      # To speed up the workflow, we cache the .terraform directory and terrraform providers
+      # To avoid redownloading the providers everytime the workflow runs
+      - name: Cache Terraform providers
+        uses: terraform-cache/terraform-cache@v1
+
       - name: Configure AWS Credentials for github actions
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           audience: sts.amazonaws.com
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::533267063404:role/cicdactions #change to reflect IAM role’s ARN
+          aws-region: ${{secrets.AWS_REGION}}
+          role-to-assume: ${{secrets.ROLE_TO_ASSUME}} #change to reflect IAM role’s ARN
 
       # Runs a set of commands using the runner's shell
       - name: Initialize project and view terraform plan
@@ -46,10 +56,11 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           audience: sts.amazonaws.com
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::533267063404:role/cicdactions
+          aws-region: ${{secrets.AWS_REGION}}
+          role-to-assume: ${{secrets.ROLE_TO_ASSUME}}
       - name: Initialize project and deploy to AWS
         run: |
           terraform fmt -recursive
           terraform init
+          terraform validate
           terraform apply
