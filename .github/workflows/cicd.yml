@@ -55,5 +55,8 @@ jobs:
     needs: plan
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Deploy to AWS
         run: terraform apply
