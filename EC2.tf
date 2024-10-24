@@ -1,3 +1,4 @@
+# Data block to query instance attributes from AWS
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -11,7 +12,7 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["099720109477"]
 }
 
 resource "aws_instance" "web" {

@@ -20,7 +20,7 @@ resource "aws_db_subnet_group" "rds_subnets" {
 }
 
 
-#To Create a security group for RDS Database Instance
+# To Create a security group for RDS Database Instance
 resource "aws_security_group" "rds_sg" {
   name   = "rds_sg"
   vpc_id = aws_vpc.rds_vpc.id

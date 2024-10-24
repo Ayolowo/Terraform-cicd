@@ -8,7 +8,7 @@ resource "aws_vpc" "rds_vpc" {
   }
 }
 
-#Create Internet Gateway
+# Create Internet Gateway
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.rds_vpc.id
   tags = {
@@ -17,7 +17,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 }
 
 
-#Retrieve the list of AZs in the current AWS region
+# Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
 
@@ -51,7 +51,7 @@ resource "aws_subnet" "private_subnets" {
 }
 
 
-#Create route tables for public and private subnets
+# Create route tables for public and private subnets
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.rds_vpc.id
 
@@ -76,7 +76,7 @@ resource "aws_route_table" "private_route_table" {
   }
 }
 
-#Create route table associations
+# Create route table associations
 resource "aws_route_table_association" "public" {
   depends_on     = [aws_subnet.public_subnets]
   route_table_id = aws_route_table.public_route_table.id
