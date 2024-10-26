@@ -1,8 +1,11 @@
-# Terraform Project: VPC with EC2 and RDS Setup
+# Terraform Project: Provisioning RDS MYSQL instance and an EC2 Instance using Terraform and CICD
 
 ![MYSQLRDS](./MYARC.png)
 
 In this Terraform project, I created a robust and secure AWS infrastructure that includes a Virtual Private Cloud (VPC) with both public and private subnets, an EC2 instance for administrative access, and a MySQL RDS instance for database management. Below is a detailed explanation of the infrastructure setup and its components.
+
+Technical documentation for this project : https://medium.com/@ayolowo9/provisioning-mysql-rds-database-and-ec2-instance-using-terraform-4ed8a42f84e9
+Technical documentation for CI/CD: https://medium.com/@ayolowo9/using-github-actions-to-deploy-terraform-configuration-to-aws-a-ci-cd-workflow-fff3b420ee62
 
 ## VPC Configuration
 
