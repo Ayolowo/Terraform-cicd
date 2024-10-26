@@ -1,4 +1,4 @@
-# Terraform Project: Provisioning RDS MYSQL instance and an EC2 Instance using Terraform and CICD
+# Provisioning RDS MYSQL instance and an EC2 Instance using Terraform and CICD
 
 ![MYSQLRDS](./MYARC.png)
 
