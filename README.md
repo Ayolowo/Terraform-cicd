@@ -64,42 +64,43 @@ In this Terraform project, I created a robust and secure AWS infrastructure that
 1. VPC:
 
 ```hcl
-   resource "aws_vpc" "rds_vpc" {
-   cidr_block = var.vpc_cidr
-   enable_dns_hostnames = true
-   tags = {
-   Name = "rds_vpc"
-   }
-   }
+resource "aws_vpc" "rds_vpc" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  tags = {
+    Name = "rds_vpc"
+  }
+}
+
 ```
 
 2. Subnets:
 
 ```hcl
 resource "aws_subnet" "public_subnets" {
-for_each = var.public_subnets
-vpc_id = aws_vpc.rds_vpc.id
-cidr_block = cidrsubnet(var.vpc_cidr, 8, each.value + 100)
-availability_zone = tolist(data.aws_availability_zones.available.names)[each.value]
-map_public_ip_on_launch = true
+  for_each                = var.public_subnets
+  vpc_id                  = aws_vpc.rds_vpc.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, each.value + 100)
+  availability_zone       = tolist(data.aws_availability_zones.available.names)[each.value]
+  map_public_ip_on_launch = true
 
-tags = {
-Name = each.key
-Terraform = "true"
-}
+  tags = {
+    Name      = each.key
+    Terraform = "true"
+  }
 }
 
 
 resource "aws_subnet" "private_subnets" {
-for_each = var.private_subnets
-vpc_id = aws_vpc.rds_vpc.id
-cidr_block = cidrsubnet(var.vpc_cidr, 8, each.value)
-availability_zone = tolist(data.aws_availability_zones.available.names)[each.value]
+  for_each          = var.private_subnets
+  vpc_id            = aws_vpc.rds_vpc.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, each.value)
+  availability_zone = tolist(data.aws_availability_zones.available.names)[each.value]
 
-tags = {
-Name = each.key
-Terraform = "true"
-}
+  tags = {
+    Name      = each.key
+    Terraform = "true"
+  }
 }
 ```
 
@@ -107,40 +108,40 @@ Terraform = "true"
 
 ```hcl
 resource "aws_route_table" "public_route_table" {
-vpc_id = aws_vpc.rds_vpc.id
+  vpc_id = aws_vpc.rds_vpc.id
 
-route {
-cidr_block = "0.0.0.0/0"
-gateway_id = aws_internet_gateway.internet_gateway.id
-#nat_gateway_id = aws_nat_gateway.nat_gateway.id
-}
-tags = {
-Name = "public_rtb"
-Terraform = "true"
-}
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.internet_gateway.id
+    #nat_gateway_id = aws_nat_gateway.nat_gateway.id
+  }
+  tags = {
+    Name      = "public_rtb"
+    Terraform = "true"
+  }
 }
 
 resource "aws_route_table" "private_route_table" {
-vpc_id = aws_vpc.rds_vpc.id
+  vpc_id = aws_vpc.rds_vpc.id
 
-tags = {
-Name = "private_rtb"
-Terraform = "true"
-}
+  tags = {
+    Name      = "private_rtb"
+    Terraform = "true"
+  }
 }
 
 resource "aws_route_table_association" "public" {
-depends_on = [aws_subnet.public_subnets]
-route_table_id = aws_route_table.public_route_table.id
-for_each = aws_subnet.public_subnets
-subnet_id = each.value.id
+  depends_on     = [aws_subnet.public_subnets]
+  route_table_id = aws_route_table.public_route_table.id
+  for_each       = aws_subnet.public_subnets
+  subnet_id      = each.value.id
 }
 
 resource "aws_route_table_association" "private" {
-depends_on = [aws_subnet.private_subnets]
-route_table_id = aws_route_table.private_route_table.id
-for_each = aws_subnet.private_subnets
-subnet_id = each.value.id
+  depends_on     = [aws_subnet.private_subnets]
+  route_table_id = aws_route_table.private_route_table.id
+  for_each       = aws_subnet.private_subnets
+  subnet_id      = each.value.id
 }
 ```
 
@@ -148,45 +149,46 @@ subnet_id = each.value.id
 
 ```hcl
 resource "aws_internet_gateway" "internet_gateway" {
-vpc_id = aws_vpc.rds_vpc.id
-tags = {
-Name = "internet_access_igw"
+  vpc_id = aws_vpc.rds_vpc.id
+  tags = {
+    Name = "internet_access_igw"
+  }
 }
-}
+
 ```
 
 5. EC2 Instance:
 
 ```hcl
 data "aws_ami" "ubuntu" {
-most_recent = true
+  most_recent = true
 
-filter {
-name = "name"
-values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-}
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
 
-filter {
-name = "virtualization-type"
-values = ["hvm"]
-}
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 
-owners = ["099720109477"] # Canonical
+  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_instance" "web" {
-ami = data.aws_ami.ubuntu.id
-instance_type = "t3.micro"
-subnet_id = aws_subnet.public_subnets["public_subnet_1"].id
-associate_public_ip_address = true
-key_name = aws_key_pair.ec2_key_pair.key_name
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = "t3.micro"
+  subnet_id                   = aws_subnet.public_subnets["public_subnet_1"].id
+  associate_public_ip_address = true
+  key_name                    = aws_key_pair.ec2_key_pair.key_name
 
-vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-depends_on = [aws_key_pair.ec2_key_pair, aws_security_group.ec2_sg]
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
+  depends_on             = [aws_key_pair.ec2_key_pair, aws_security_group.ec2_sg]
 
-tags = {
-Name = "For RDS"
-}
+  tags = {
+    Name = "For RDS"
+  }
 }
 ```
 
@@ -194,29 +196,29 @@ Name = "For RDS"
 
 ```hcl
 resource "aws_security_group" "ec2_sg" {
-name = "ec2_sg"
-description = "Allow SSH inbound traffic"
-vpc_id = aws_vpc.rds_vpc.id
-depends_on = [aws_vpc.rds_vpc]
+  name        = "ec2_sg"
+  description = "Allow SSH inbound traffic"
+  vpc_id      = aws_vpc.rds_vpc.id
+  depends_on  = [aws_vpc.rds_vpc]
 
-ingress {
-description = "Allow SSH"
-from_port = 22
-to_port = 22
-protocol = "tcp"
-cidr_blocks = ["0.0.0.0/0"]
-}
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-egress {
-from_port = 0
-to_port = 0
-protocol = "-1"
-cidr_blocks = ["0.0.0.0/0"]
-}
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-tags = {
-Name = "ec2_sg"
-}
+  tags = {
+    Name = "ec2_sg"
+  }
 }
 ```
 
@@ -226,20 +228,20 @@ Name = "ec2_sg"
 
 ```hcl
 resource "local_sensitive_file" "tf_key" {
-content = tls_private_key.rsa.private_key_pem
-file_permission = "600"
-directory_permission = "700"
-filename = "${aws_key_pair.ec2_key_pair.key_name}.pem"
+  content              = tls_private_key.rsa.private_key_pem
+  file_permission      = "600"
+  directory_permission = "700"
+  filename             = "${aws_key_pair.ec2_key_pair.key_name}.pem"
 }
 
 resource "aws_key_pair" "ec2_key_pair" {
-key_name = "ec2_key_pair"
-public_key = tls_private_key.rsa.public_key_openssh
+  key_name   = "ec2_key_pair"
+  public_key = tls_private_key.rsa.public_key_openssh
 }
 
 resource "tls_private_key" "rsa" {
-algorithm = "RSA"
-rsa_bits = 4096
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 ```
 
@@ -247,23 +249,23 @@ rsa_bits = 4096
 
 ```hcl
 resource "aws_db_instance" "myrdsinstance" {
-engine = "mysql"
-identifier = "myrdsinstance"
-allocated_storage = 5
-engine_version = "8.0"
-instance_class = "db.t3.micro"
-username = var.username
-password = var.password
-parameter_group_name = "default.mysql8.0"
-vpc_security_group_ids = ["${aws_security_group.rds_sg.id}"]
-skip_final_snapshot = true
-publicly_accessible = false
-db_subnet_group_name = aws_db_subnet_group.rds_subnets.name
+  engine                 = "mysql"
+  identifier             = "myrdsinstance"
+  allocated_storage      = 5
+  engine_version         = "8.0"
+  instance_class         = "db.t3.micro"
+  username               = var.username
+  password               = var.password
+  parameter_group_name   = "default.mysql8.0"
+  vpc_security_group_ids = ["${aws_security_group.rds_sg.id}"]
+  skip_final_snapshot    = true
+  publicly_accessible    = false
+  db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
 }
 
 resource "aws_db_subnet_group" "rds_subnets" {
-name = "my-db-subnet-group"
-subnet_ids = [aws_subnet.private_subnets["private_subnet_1"].id, aws_subnet.private_subnets["private_subnet_2"].id]
+  name       = "my-db-subnet-group"
+  subnet_ids = [aws_subnet.private_subnets["private_subnet_1"].id, aws_subnet.private_subnets["private_subnet_2"].id]
 }
 ```
 
@@ -271,21 +273,21 @@ subnet_ids = [aws_subnet.private_subnets["private_subnet_1"].id, aws_subnet.priv
 
 ```hcl
 resource "aws_security_group" "rds_sg" {
-name = "rds_sg"
-vpc_id = aws_vpc.rds_vpc.id
+  name   = "rds_sg"
+  vpc_id = aws_vpc.rds_vpc.id
 
-ingress {
-from_port = 3306
-to_port = 3306
-protocol = "tcp"
-cidr_blocks = ["0.0.0.0/0"]
-}
-egress {
-from_port = 0
-to_port = 0
-protocol = "-1"
-cidr_blocks = ["0.0.0.0/0"]
-}
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 ```
 
