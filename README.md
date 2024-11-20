@@ -1,4 +1,5 @@
 # Provisioning RDS MySQL and EC2 Instance with Terraform and CI/CD
+![MYSQLRDS](./MYARC.png)
 
 This project creates a secure AWS infrastructure using Terraform and CI/CD practices. It includes a VPC, subnets, an EC2 instance, and an RDS MySQL database. Below is a summary of the setup and its key components.
 
