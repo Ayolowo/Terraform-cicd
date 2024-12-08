@@ -4,6 +4,11 @@
 
 This project provisions a secure AWS infrastructure using Terraform and CI/CD practices. It includes a VPC, subnets, an EC2 instance, an RDS MySQL database, and a NAT Gateway for private subnet internet access.
 
+## Detailed guides:
+
+- [Infrastructure Setup Documentation](https://medium.com/@ayolowo9/provisioning-mysql-rds-database-and-ec2-instance-using-terraform-4ed8a42f84e9)
+- [CI/CD Workflow Documentation](https://medium.com/@ayolowo9/using-github-actions-to-deploy-terraform-configuration-to-aws-a-ci-cd-workflow-fff3b420ee62)
+
 ## Overview
 
 - **VPC**: Centralized network to host all resources.
