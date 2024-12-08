@@ -1,4 +1,3 @@
-# Data block to query instance attributes from AWS
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -12,7 +11,7 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"]
+  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_instance" "web" {
@@ -43,7 +42,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Should restrict to your IP (e.g., x.x.x.x/32)
   }
 
   egress {
