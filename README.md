@@ -2,7 +2,7 @@
 
 ![MYSQLRDS](./arc-diagram.png)
 
-This project provisions a secure AWS infrastructure using Terraform and CI/CD practices. It includes a VPC, subnets, an EC2 instance, an RDS MySQL database, and a NAT Gateway for private subnet internet access.
+This project provisions a secure AWS infrastructure using Terraform and CI/CD practices. It includes a VPC, subnets, an EC2 instance, an RDS MySQL database, an Internet Gateway, and a NAT Gateway for private subnet internet access.
 
 ## Detailed guides:
 
@@ -65,6 +65,22 @@ To provision the infrastructure:
    terraform apply
    ```
 6. Confirm the terraform apply step when prompted.
+
+## Accessing Resources
+
+### SSH Access to EC2
+
+Use the `.pem` file generated during the setup to SSH into the EC2 instance:
+
+```bash
+ssh -i "ec2_key_pair.pem" ubuntu@<EC2-PUBLIC-IP>
+```
+
+### Connecting to RDS
+
+```bash
+mysql -h <RDS-ENDPOINT> -P 3306 -u <USERNAME> -p
+```
 
 ## Conclusion
 
