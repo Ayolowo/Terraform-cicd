@@ -16,6 +16,21 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
+# Create an Elastic IP for the NAT Gateway
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+}
+
+# Create the NAT Gateway in a public subnet
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id
+
+  tags = {
+    Name = "nat_gateway"
+  }
+  depends_on = [aws_internet_gateway.internet_gateway]
+}
 
 # Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
@@ -34,23 +49,6 @@ resource "aws_subnet" "public_subnets" {
     Name      = each.key
     Terraform = "true"
   }
-}
-
-
-# Create an Elastic IP for the NAT Gateway
-resource "aws_eip" "nat_eip" {
-  domain = "vpc"
-}
-
-# Create the NAT Gateway in a public subnet
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id
-
-  tags = {
-    Name = "nat_gateway"
-  }
-  depends_on = [aws_internet_gateway.internet_gateway]
 }
 
 # Deploy the private subnets

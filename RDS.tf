@@ -12,6 +12,7 @@ resource "aws_db_instance" "myrdsinstance" {
   skip_final_snapshot    = true
   publicly_accessible    = false
   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
+  multi_az               = true
 }
 
 resource "aws_db_subnet_group" "rds_subnets" {
@@ -29,7 +30,13 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [aws_instance.my_instance.private_ip]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
