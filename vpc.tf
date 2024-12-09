@@ -1,3 +1,7 @@
+# Retrieve the list of AZs in the current AWS region
+data "aws_availability_zones" "available" {}
+data "aws_region" "current" {}
+
 # Create VPC
 resource "aws_vpc" "rds_vpc" {
   cidr_block           = var.vpc_cidr
@@ -32,11 +36,8 @@ resource "aws_nat_gateway" "nat_gateway" {
   depends_on = [aws_internet_gateway.internet_gateway]
 }
 
-# Retrieve the list of AZs in the current AWS region
-data "aws_availability_zones" "available" {}
-data "aws_region" "current" {}
 
-# Create 4 subnets, 2 public and 2 private
+# Create 3 subnets, 1 public and 2 private
 # Deploy the public subnets
 resource "aws_subnet" "public_subnets" {
   for_each                = var.public_subnets

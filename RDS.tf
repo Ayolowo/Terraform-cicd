@@ -30,7 +30,7 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = [aws_instance.my_instance.private_ip]
+    cidr_blocks = [aws_instance.web.private_ip]
   }
 
   egress {
